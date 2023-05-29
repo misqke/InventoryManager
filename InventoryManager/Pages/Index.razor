@@ -1,0 +1,40 @@
+﻿@page "/"
+@inject LocationService _locationService
+
+<div>
+    <form id="newLocationForm" onsubmit="@addLocation">
+        <input @bind=newLocation.LocationName />
+        <button type="submit" form="newLocationForm">Submit</button>
+    </form>
+    <hr />
+    <ul>
+        @foreach(var location in locations)
+        {
+            <li>@location.LocationName</li>
+        }
+    </ul>
+</div>
+
+
+@code {
+    public List<LocationModel> locations = new List<LocationModel>();
+
+    public LocationModel newLocation = new LocationModel();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        locations = await _locationService.getLocations();
+
+    }
+
+    public async void addLocation()
+    {
+        LocationModel addedLocation = await _locationService.addLocation(newLocation);
+        locations.Add(addedLocation);
+        newLocation = new LocationModel();
+        StateHasChanged();
+    }
+}
+
+
