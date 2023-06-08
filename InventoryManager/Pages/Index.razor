@@ -1,39 +1,31 @@
 ﻿@page "/"
 @inject LocationService _locationService
+@implements IDisposable
 
-<div>
-    <form id="newLocationForm" onsubmit="@addLocation">
-        <input @bind=newLocation.LocationName />
-        <button type="submit" form="newLocationForm">Submit</button>
-    </form>
-    <hr />
-    <ul>
-        @foreach(var location in locations)
-        {
-            <li>@location.LocationName</li>
-        }
-    </ul>
-</div>
+
+@foreach (var location in _locationService.Locations)
+{
+    <p>@location.LocationName</p>
+}
+
+<NavMenu />
+
+
+
 
 
 @code {
-    public List<LocationModel> locations = new List<LocationModel>();
-
-    public LocationModel newLocation = new LocationModel();
-
 
     protected override async Task OnInitializedAsync()
     {
-        locations = await _locationService.getLocations();
-
+        _locationService.OnStateChange += StateHasChanged;
+        await _locationService.SetLocations();
     }
 
-    public async void addLocation()
+
+    public void Dispose()
     {
-        LocationModel addedLocation = await _locationService.addLocation(newLocation);
-        locations.Add(addedLocation);
-        newLocation = new LocationModel();
-        StateHasChanged();
+        _locationService.OnStateChange -= StateHasChanged;
     }
 }
 

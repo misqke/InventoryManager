@@ -1,0 +1,31 @@
+﻿@inject LocationService _locationService
+@implements IDisposable
+
+<dialog id="locationModal" open="@(_locationService.SelectedLocation is null ? false : true)">
+    <p>Deleting this location will delete all of it's associated data also. Are you sure you want to delete?'</p>
+    <button @onclick="@(() => handleCancelDelete())">Cancel</button>
+    <button @onclick="@(() => handleDeleteLocation())">Delete</button>
+</dialog>
+
+@code {
+
+    public async void handleDeleteLocation()
+    {
+        await _locationService.DeleteSelectedLocation();
+    }
+
+    protected override void OnInitialized()
+    {
+        _locationService.OnStateChange += StateHasChanged;
+    }
+
+    private void handleCancelDelete()
+    {
+        _locationService.ClearSelected();
+    }
+
+    public void Dispose()
+    {
+        _locationService.OnStateChange -= StateHasChanged;
+    }
+}

@@ -11,6 +11,8 @@ namespace InventoryManager.Services
     {
         private DatabaseContext db { get; set; }
 
+        public event Action OnStateChange;
+
         public CategoryService()
         {
             if (db != null)
@@ -20,6 +22,8 @@ namespace InventoryManager.Services
 
             db = new DatabaseContext();
         }
+
+        private void NotifyStateChanged() => OnStateChange?.Invoke();
 
         public async Task<CategoryModel> AddCategory(CategoryModel category)
         {

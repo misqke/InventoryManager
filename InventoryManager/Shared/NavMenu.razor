@@ -1,0 +1,51 @@
+﻿<div @onclick="@(() => changeDisplayMode("main"))" class="overlay @(displayMode == "main" ? "" : "show")" />
+<div class="sidebar @(displayMode == "main" ? "" : "show")">
+    <div class="sidebarNav">
+        <div @onclick="@(() => changeDisplayMode("settings"))" class="sidebarNavBtn @(displayMode == "settings" ? "active" : null)">
+            <i class="bi bi-gear-fill"></i>
+        </div>
+        <div @onclick="@(() => changeDisplayMode("locations"))" class="sidebarNavBtn @(displayMode == "locations" ? "active" : null)">
+            <i class="bi bi-house-fill"></i>
+        </div>
+        <div @onclick="@(() => changeDisplayMode("categories"))" class="sidebarNavBtn @(displayMode == "categories" ? "active" : null)">
+            <i class="bi bi-tag-fill"></i>
+        </div>
+        <div @onclick="@(() => changeDisplayMode("items"))" class="sidebarNavBtn @(displayMode == "items" ? "active" : null)">
+            <i class="bi bi-box2-fill"></i>
+        </div>
+    </div>
+    <div class="sidebarView">
+        @if (displayMode == "locations")
+        {
+            <LocationsView />
+        }
+        else if (displayMode == "categories")
+        {
+            <CategoriesView />
+        }
+        else if (displayMode == "items")
+        {
+            <ItemsView />
+        }
+        else if (displayMode == "settings")
+        {
+            <SettingsView />
+        }
+    </div>
+</div>
+
+@code {
+    public string displayMode { get; set; } = "main";
+
+    public void changeDisplayMode(string mode)
+    {
+        if (mode == displayMode)
+        {
+            displayMode = "main";
+        }
+        else
+        {
+            displayMode = mode;
+        }
+    }
+}

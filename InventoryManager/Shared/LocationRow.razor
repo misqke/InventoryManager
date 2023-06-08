@@ -1,0 +1,64 @@
+﻿@inject LocationService _locationService
+@implements IDisposable
+
+<div class="sidebarTableRow">
+    <input class="tableRowInput" type="text" @bind="@location.LocationName" @ref="input" disabled=@editDisabled />
+    <div class="tableIcon editIcon">
+        @if (editDisabled)
+        {
+            <i class="bi bi-pencil-fill" @onclick="@(() => handleChangeEdit(false))"></i>
+        }
+        else
+        {
+            <i class="bi bi-check-lg" @onclick="@(() => handleEditLocation())"></i>
+        }
+    </div>
+    <div class="tableIcon deleteIcon">
+        @if (editDisabled)
+        {
+            <i class="bi bi-trash-fill" @onclick="@(() => handleDeleteLocation())"></i>
+        }
+        else
+        {
+            <i class="bi bi-x-lg" @onclick="@(() => handleChangeEdit(true))"></i>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public LocationModel location { get; set; }
+
+    private bool editDisabled { get; set; } = true;
+
+    public ElementReference input { get; set; }
+
+
+    protected override void OnInitialized()
+    {
+        _locationService.OnStateChange += StateHasChanged;
+    }
+
+    public void handleChangeEdit(bool disabledBool)
+    {
+        editDisabled = disabledBool;
+    }
+
+    public async void handleEditLocation()
+    {
+        await _locationService.EditLocation(location);
+        editDisabled = true;
+
+        StateHasChanged();
+    }
+
+    public void handleDeleteLocation()
+    {
+        _locationService.SelectLocation(location);
+    }
+
+    public void Dispose()
+    {
+        _locationService.OnStateChange -= StateHasChanged;
+    }
+}

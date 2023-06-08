@@ -1,0 +1,47 @@
+﻿@inject LocationService _locationService
+@implements IDisposable
+
+<h3>LocationsView</h3>
+<div class="addNewRow">
+    <input class="tableRowInput" @bind="@newLocation.LocationName" placeholder="New Location" />
+    <button class="btn" @onclick="@handleAddLocation">save</button>
+</div>
+<div class="sidebarTable">
+    @foreach (var location in _locationService.Locations)
+    {
+        <LocationRow location="@location" />
+    }
+</div>
+<LocationModal />
+
+
+
+@code {
+    public LocationModel newLocation { get; set; } = new LocationModel();
+
+
+    protected override void OnInitialized()
+    {
+        _locationService.OnStateChange += StateHasChanged;
+    }
+
+    private async void handleAddLocation()
+    {
+        if (string.IsNullOrEmpty(newLocation.LocationName))
+        {
+            return;
+        }
+        LocationModel addedLocation = await _locationService.AddLocation(newLocation);
+        newLocation = new LocationModel();
+        StateHasChanged();
+    }
+
+    
+
+    public void Dispose()
+    {
+        _locationService.OnStateChange -= StateHasChanged;
+    }
+
+    
+}
