@@ -1,0 +1,74 @@
+﻿@inject ItemService _itemService
+@implements IDisposable
+
+<div class="sidebarTableRow" style="grid-template-columns: 4fr 3fr 1fr 1fr;">
+    <input class="tableRowInput" type="text" @bind="@item.ItemName" @ref="input" disabled=@editDisabled />
+    <select class="tableRowSelect" @bind=@item.CategoryId disabled=@editDisabled>
+        <option value="0">Uncategorized</option>
+        @foreach (var category in categories)
+        {
+            <option value="@category.CategoryId">@category.CategoryName</option>
+        }
+    </select>
+    <div class="tableIcon editIcon">
+        @if (editDisabled)
+        {
+            <i class="bi bi-pencil-fill" @onclick="@(() => handleChangeEdit(false))"></i>
+        }
+        else
+        {
+            <i class="bi bi-check-lg" @onclick="@(() => handleEditItem())"></i>
+        }
+    </div>
+    <div class="tableIcon deleteIcon">
+        @if (editDisabled)
+        {
+            <i class="bi bi-trash-fill" @onclick="@(() => handleDeleteItem())"></i>
+        }
+        else
+        {
+            <i class="bi bi-x-lg" @onclick="@(() => handleChangeEdit(true))"></i>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public ItemModel item { get; set; }
+
+    [Parameter]
+    public List<CategoryModel> categories { get; set; }
+
+    private bool editDisabled { get; set; } = true;
+
+    public ElementReference input { get; set; }
+
+
+    protected override void OnInitialized()
+    {
+        _itemService.OnStateChange += StateHasChanged;
+    }
+
+    public void handleChangeEdit(bool disabledBool)
+    {
+        editDisabled = disabledBool;
+    }
+
+    public async void handleEditItem()
+    {
+        await _itemService.EditItem(item);
+        editDisabled = true;
+
+        StateHasChanged();
+    }
+
+    public void handleDeleteItem()
+    {
+        _itemService.SetItemToDelete(item);
+    }
+
+    public void Dispose()
+    {
+        _itemService.OnStateChange -= StateHasChanged;
+    }
+}

@@ -1,13 +1,22 @@
 ﻿@page "/"
 @inject LocationService _locationService
+@inject CategoryService _categoryService
+@inject ItemService _itemService
 @implements IDisposable
 
 
-@foreach (var location in _locationService.Locations)
-{
-    <p>@location.LocationName</p>
-}
-
+<div class="inventoryContainer">
+    <div class="inventoryNav">
+        @foreach (var location in _locationService.Locations)
+        {
+            <div class="inventoryNavTab @(currentLocation.LocationId == location.LocationId ? "active" : null)"
+            @onclick="@(() => setCurrentLocation(location))">
+                @location.LocationName
+            </div>
+        }
+    </div>
+    <div class="inventoryDisplay"></div>
+</div>
 <NavMenu />
 
 
@@ -15,17 +24,31 @@
 
 
 @code {
+    public LocationModel currentLocation { get; set; } = new LocationModel();
 
     protected override async Task OnInitializedAsync()
     {
         _locationService.OnStateChange += StateHasChanged;
-        await _locationService.SetLocations();
-    }
+        _categoryService.OnStateChange += StateHasChanged;
+        _itemService.OnStateChange += StateHasChanged;
+        await _locationService.InitiateLocations();
+        await _categoryService.InitiateCategories();
+        await _itemService.InitiateItems();
 
+        currentLocation = _locationService.Locations[0];
+    }
 
     public void Dispose()
     {
         _locationService.OnStateChange -= StateHasChanged;
+        _categoryService.OnStateChange -= StateHasChanged;
+        _itemService.OnStateChange -= StateHasChanged;
+    }
+
+    private void setCurrentLocation(LocationModel location)
+    {
+        currentLocation = location;
+        StateHasChanged();
     }
 }
 

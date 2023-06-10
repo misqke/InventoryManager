@@ -1,7 +1,7 @@
 ﻿@inject LocationService _locationService
 @implements IDisposable
 
-<h3>LocationsView</h3>
+<h3 class="sidebarTitle">Locations</h3>
 <div class="addNewRow">
     <input class="tableRowInput" @bind="@newLocation.LocationName" placeholder="New Location" />
     <button class="btn" @onclick="@handleAddLocation">save</button>

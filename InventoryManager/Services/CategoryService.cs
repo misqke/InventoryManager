@@ -10,7 +10,7 @@ namespace InventoryManager.Services
 {
     public class CategoryService
     {
-        private DatabaseContext db { get; set; }
+        private DatabaseContext DB { get; set; }
 
         public List<CategoryModel> Categories { get; set; } = new List<CategoryModel>();
 
@@ -20,12 +20,12 @@ namespace InventoryManager.Services
 
         public CategoryService()
         {
-            if (db != null)
+            if (DB != null)
             {
                 return;
             }
 
-            db = new DatabaseContext();
+            DB = new DatabaseContext();
         }
 
         private void NotifyStateChanged() => OnStateChange?.Invoke();
@@ -42,16 +42,16 @@ namespace InventoryManager.Services
             NotifyStateChanged();
         }
 
-        public async Task<List<CategoryModel>> SetCategories()
+        public async Task<List<CategoryModel>> InitiateCategories()
         {
-            Categories = await db.GetAllCategories();
+            Categories = await DB.GetAllCategories();
             NotifyStateChanged();
             return Categories;
         }
 
         public async Task<CategoryModel> AddCategory(CategoryModel category)
         {
-            CategoryModel newCategory = await db.AddCategory(category);
+            CategoryModel newCategory = await DB.AddCategory(category);
             Categories.Add(newCategory);
             NotifyStateChanged();
             return newCategory;
@@ -64,7 +64,7 @@ namespace InventoryManager.Services
 
         public async Task<CategoryModel> EditCategory(CategoryModel category)
         {
-            CategoryModel updatedCategory = await db.EditCategory(category);
+            CategoryModel updatedCategory = await DB.EditCategory(category);
             int index = Categories.IndexOf(category);
             Categories[index] = updatedCategory;
             NotifyStateChanged();
@@ -73,7 +73,7 @@ namespace InventoryManager.Services
 
         public async Task<CategoryModel> DeleteCategory(CategoryModel category)
         {
-            int res = await db.DeleteCategory(category);
+            int res = await DB.DeleteCategory(category);
             Categories.Remove(category);
             NotifyStateChanged();
             return category;
@@ -81,7 +81,7 @@ namespace InventoryManager.Services
 
         public async Task DeleteSelectedCategory()
         {
-            int res = await db.DeleteCategory(CategoryToDelete);
+            int res = await DB.DeleteCategory(CategoryToDelete);
             Categories.Remove(CategoryToDelete);
             CategoryToDelete = null;
             NotifyStateChanged();

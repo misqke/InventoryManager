@@ -9,7 +9,7 @@ namespace InventoryManager.Services
 {
     public class LocationService
     {
-        private DatabaseContext db { get; set; }
+        private DatabaseContext DB { get; set; }
 
         public List<LocationModel> Locations { get; set; } = new List<LocationModel>();
 
@@ -19,12 +19,12 @@ namespace InventoryManager.Services
 
         public LocationService()
         {
-            if (db != null)
+            if (DB != null)
             {
                 return;
             }
 
-            db = new DatabaseContext();
+            DB = new DatabaseContext();
             
         }
 
@@ -42,16 +42,16 @@ namespace InventoryManager.Services
             NotifyStateChanged();
         }
 
-        public async Task<List<LocationModel>> SetLocations()
+        public async Task<List<LocationModel>> InitiateLocations()
         {
-            Locations = await db.GetAllLocations();
+            Locations = await DB.GetAllLocations();
             NotifyStateChanged();
             return Locations;
         }
 
         public async Task<LocationModel> AddLocation(LocationModel location)
         {
-            LocationModel newLocation = await db.AddLocation(location);
+            LocationModel newLocation = await DB.AddLocation(location);
             Locations.Add(newLocation);
             NotifyStateChanged();
             return newLocation;
@@ -64,7 +64,7 @@ namespace InventoryManager.Services
 
         public async Task<LocationModel> EditLocation(LocationModel location)
         {
-            LocationModel updatedLocation = await db.EditLocation(location);
+            LocationModel updatedLocation = await DB.EditLocation(location);
             int index = Locations.IndexOf(location);
             Locations[index] = updatedLocation;
             NotifyStateChanged();
@@ -73,7 +73,7 @@ namespace InventoryManager.Services
 
         public async Task<LocationModel> DeleteLocation(LocationModel location)
         {
-            int res = await db.DeleteLocation(location);
+            int res = await DB.DeleteLocation(location);
             Locations.Remove(location);
             NotifyStateChanged();
             return location;
@@ -81,7 +81,7 @@ namespace InventoryManager.Services
 
         public async Task DeleteSelectedLocation()
         {
-            int res = await db.DeleteLocation(LocationToDelete);
+            int res = await DB.DeleteLocation(LocationToDelete);
             Locations.Remove(LocationToDelete);
             LocationToDelete = null;
             NotifyStateChanged();

@@ -1,0 +1,31 @@
+﻿@inject ItemService _itemService
+@implements IDisposable
+
+<dialog id="locationModal" open="@(_itemService.ItemToDelete is null ? false : true)">
+    <p>Deleting this item will delete all of it's associated data also. Are you sure you want to delete?</p>
+    <button @onclick="@(() => handleCancelDelete())">Cancel</button>
+    <button @onclick="@(() => handleDeleteItem())">Delete</button>
+</dialog>
+
+@code {
+
+    public async void handleDeleteItem()
+    {
+        await _itemService.DeleteSelectedItem();
+    }
+
+    protected override void OnInitialized()
+    {
+        _itemService.OnStateChange += StateHasChanged;
+    }
+
+    private void handleCancelDelete()
+    {
+        _itemService.ClearItemToDelete();
+    }
+
+    public void Dispose()
+    {
+        _itemService.OnStateChange -= StateHasChanged;
+    }
+}

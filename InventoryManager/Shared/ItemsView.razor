@@ -1,5 +1,59 @@
-﻿<h3>ItemsView</h3>
+﻿@inject ItemService _itemService
+@inject CategoryService _categoryService
+@implements IDisposable
+
+<h3 class="sidebarTitle">Items</h3>
+<div class="addNewRow">
+    <input class="tableRowInput" @bind="@newItem.ItemName" placeholder="New Item" />
+    
+</div>
+<div class="addNewRow">
+    <select class="tableRowSelect" @bind=@newItem.CategoryId>
+        <option value="0">Uncategorized</option>
+        @foreach(var category in _categoryService.Categories)
+        {
+            <option value="@category.CategoryId">@category.CategoryName</option>
+        }
+    </select>
+    <button class="btn" @onclick="@handleAddItem">save</button>
+</div>
+<div class="sidebarTable">
+    @foreach (var item in _itemService.Items)
+    {
+        <ItemRow item="@item" categories="@_categoryService.Categories" />
+    }
+</div>
+<ItemModal />
+
+
 
 @code {
+    public ItemModel newItem { get; set; } = new ItemModel();
+
+
+    protected override void OnInitialized()
+    {
+        _itemService.OnStateChange += StateHasChanged;
+    }
+
+    private async void handleAddItem()
+    {
+        if (string.IsNullOrEmpty(newItem.ItemName))
+        {
+            return;
+        }
+
+        ItemModel addedLocation = await _itemService.AddItem(newItem);
+        newItem = new ItemModel();
+        StateHasChanged();
+    }
+
+
+
+    public void Dispose()
+    {
+        _itemService.OnStateChange -= StateHasChanged;
+    }
+
 
 }

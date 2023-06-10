@@ -1,7 +1,7 @@
 ﻿@inject CategoryService _categoryService
 @implements IDisposable
 
-<h3>LocationsView</h3>
+<h3 class="sidebarTitle">Categories</h3>
 <div class="addNewRow">
     <input class="tableRowInput" @bind="@newCategory.CategoryName" placeholder="New Category" />
     <button class="btn" @onclick="@handleAddCategory">save</button>
@@ -31,7 +31,7 @@
         {
             return;
         }
-        CategoryModel addedLocation = await _categoryService.AddCategory(newCategory);
+        CategoryModel addedCategory = await _categoryService.AddCategory(newCategory);
         newCategory = new CategoryModel();
         StateHasChanged();
     }

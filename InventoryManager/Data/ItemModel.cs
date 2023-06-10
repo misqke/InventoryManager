@@ -13,7 +13,7 @@ namespace InventoryManager.Data
         [PrimaryKey, AutoIncrement]
         public int ItemId { get; set; }
 
-        public int CategoryId { get; set; }
+        public int CategoryId { get; set; } = 0;
 
         public string ItemName { get; set; }
     }
