@@ -1,5 +1,47 @@
-﻿<h3>CategoriesView</h3>
+﻿@inject CategoryService _categoryService
+@implements IDisposable
+
+<h3>LocationsView</h3>
+<div class="addNewRow">
+    <input class="tableRowInput" @bind="@newCategory.CategoryName" placeholder="New Category" />
+    <button class="btn" @onclick="@handleAddCategory">save</button>
+</div>
+<div class="sidebarTable">
+    @foreach (var category in _categoryService.Categories)
+    {
+        <CategoryRow category="@category" />
+    }
+</div>
+<CategoryModal />
+
+
 
 @code {
+    public CategoryModel newCategory { get; set; } = new CategoryModel();
+
+
+    protected override void OnInitialized()
+    {
+        _categoryService.OnStateChange += StateHasChanged;
+    }
+
+    private async void handleAddCategory()
+    {
+        if (string.IsNullOrEmpty(newCategory.CategoryName))
+        {
+            return;
+        }
+        CategoryModel addedLocation = await _categoryService.AddCategory(newCategory);
+        newCategory = new CategoryModel();
+        StateHasChanged();
+    }
+
+
+
+    public void Dispose()
+    {
+        _categoryService.OnStateChange -= StateHasChanged;
+    }
+
 
 }

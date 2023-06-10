@@ -13,7 +13,7 @@ namespace InventoryManager.Services
 
         public List<LocationModel> Locations { get; set; } = new List<LocationModel>();
 
-        public LocationModel SelectedLocation { get; set; } = null;
+        public LocationModel LocationToDelete { get; set; } = null;
 
         public event Action OnStateChange;
 
@@ -30,15 +30,15 @@ namespace InventoryManager.Services
 
         private void NotifyStateChanged() => OnStateChange?.Invoke();
 
-        public void SelectLocation(LocationModel location)
+        public void SetLocationToDelete(LocationModel location)
         {
-            SelectedLocation = location;
+            LocationToDelete = location;
             NotifyStateChanged();
         }
 
-        public void ClearSelected()
+        public void ClearLocationToDelete()
         {
-            SelectedLocation = null;
+            LocationToDelete = null;
             NotifyStateChanged();
         }
 
@@ -81,9 +81,9 @@ namespace InventoryManager.Services
 
         public async Task DeleteSelectedLocation()
         {
-            int res = await db.DeleteLocation(SelectedLocation);
-            Locations.Remove(SelectedLocation);
-            SelectedLocation = null;
+            int res = await db.DeleteLocation(LocationToDelete);
+            Locations.Remove(LocationToDelete);
+            LocationToDelete = null;
             NotifyStateChanged();
         }
     }

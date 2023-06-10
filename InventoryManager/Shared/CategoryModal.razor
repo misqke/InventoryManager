@@ -1,0 +1,31 @@
+﻿@inject CategoryService _categoryService
+@implements IDisposable
+
+<dialog id="categoryModal" open="@(_categoryService.CategoryToDelete is null ? false : true)">
+    <p>Deleting this category is permanant and will uncategorize all associated items. Are you sure you want to delete?</p>
+    <button @onclick="@(() => handleCancelDelete())">Cancel</button>
+    <button @onclick="@(() => handleDeleteCategory())">Delete</button>
+</dialog>
+
+@code {
+
+    public async void handleDeleteCategory()
+    {
+        await _categoryService.DeleteSelectedCategory();
+    }
+
+    protected override void OnInitialized()
+    {
+        _categoryService.OnStateChange += StateHasChanged;
+    }
+
+    private void handleCancelDelete()
+    {
+        _categoryService.ClearCategoryToDelete();
+    }
+
+    public void Dispose()
+    {
+        _categoryService.OnStateChange -= StateHasChanged;
+    }
+}

@@ -1,8 +1,8 @@
-﻿@inject LocationService _locationService
+﻿@inject CategoryService _categoryService
 @implements IDisposable
 
 <div class="sidebarTableRow">
-    <input class="tableRowInput" type="text" @bind="@location.LocationName" @ref="input" disabled=@editDisabled />
+    <input class="tableRowInput" type="text" @bind="@category.CategoryName" @ref="input" disabled=@editDisabled />
     <div class="tableIcon editIcon">
         @if (editDisabled)
         {
@@ -10,13 +10,13 @@
         }
         else
         {
-            <i class="bi bi-check-lg" @onclick="@(() => handleEditLocation())"></i>
+            <i class="bi bi-check-lg" @onclick="@(() => handleEditCategory())"></i>
         }
     </div>
     <div class="tableIcon deleteIcon">
         @if (editDisabled)
         {
-            <i class="bi bi-trash-fill" @onclick="@(() => handleDeleteLocation())"></i>
+            <i class="bi bi-trash-fill" @onclick="@(() => handleDeleteCategory())"></i>
         }
         else
         {
@@ -27,7 +27,7 @@
 
 @code {
     [Parameter]
-    public LocationModel location { get; set; }
+    public CategoryModel category { get; set; }
 
     private bool editDisabled { get; set; } = true;
 
@@ -36,7 +36,7 @@
 
     protected override void OnInitialized()
     {
-        _locationService.OnStateChange += StateHasChanged;
+        _categoryService.OnStateChange += StateHasChanged;
     }
 
     public void handleChangeEdit(bool disabledBool)
@@ -44,21 +44,21 @@
         editDisabled = disabledBool;
     }
 
-    public async void handleEditLocation()
+    public async void handleEditCategory()
     {
-        await _locationService.EditLocation(location);
+        await _categoryService.EditCategory(category);
         editDisabled = true;
 
         StateHasChanged();
     }
 
-    public void handleDeleteLocation()
+    public void handleDeleteCategory()
     {
-        _locationService.SetLocationToDelete(location);
+        _categoryService.SetCategoryToDelete(category);
     }
 
     public void Dispose()
     {
-        _locationService.OnStateChange -= StateHasChanged;
+        _categoryService.OnStateChange -= StateHasChanged;
     }
 }
